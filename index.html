@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+      integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      body {
+        background-color: aquamarine;
+      }
+      #nav {
+        display: flex;
+        width: 98%;
+        height: 60px;
+        border-radius: 10px;
+        padding: 10px;
+        margin: auto;
+        background-color: rgba(24, 24, 27, 0.623);
+      }
+      #nav > div:nth-child(1) {
+        flex-grow: 1;
+      }
+      #nav > div:nth-child(2) {
+        flex-grow: 2;
+      }
+      #nav > div:nth-child(3) {
+        flex-grow: 1;
+      }
+      #nav > div:nth-child(4) {
+        flex-grow: 1;
+      }
+      #nav > div:nth-child(5) {
+        flex-grow: 1;
+      }
+      input {
+        width: 600px;
+        margin: 10px 10px 5px 150px;
+        height: 32px;
+        border-radius: 13px;
+        border-style: none;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
+          rgba(0, 0, 0, 0.23) 0px 3px 6px;
+      }
+      #button {
+        padding: 5px 25px 5px 25px;
+        color: black;
+        background-color: rgb(109, 213, 226);
+        border-radius: 5px;
+      }
+      #button:hover {
+        background-color: darkorange;
+      }
+      .div > p {
+        color: white;
+        font-size: 20px;
+        padding-left: 25px;
+      }
+      img {
+        height: 65px;
+        width: 150px;
+        margin-left: 20px;
+      }
+      #container {
+        display: flex;
+        margin-top: 20px;
+      }
+      #container > div {
+        justify-content: space-around;
+        border: 2px solid white;
+        margin-left: 30px;
+        margin-right: 50px;
+        background-color: rgba(23, 23, 24, 0.445);
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        border-radius: 10px;
+        font-weight: normal;
+        font-size: 15px;
+        padding: 10px;
+      }
+
+      h5 {
+        line-height: 5px;
+      }
+      h2 {
+        color: black;
+        padding-left: 25px;
+      }
+
+      #container > div > p {
+        margin-left: 15px;
+      }
+
+      iframe {
+        height: 250px;
+        width: 800px;
+      }
+      #weather7 {
+        display: flex;
+        justify-content: space-around;
+        color: white;
+        margin-top: 60px;
+        text-align: center;
+        height: 250px;
+      }
+      #weather7 > div {
+        width: 11%;
+        gap: 10px;
+        background-color: rgba(24, 24, 27, 0.623);
+      }
+      h6 {
+        font-size: 15px;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="nav">
+      <div class="div">
+        <img
+          src="https://openweathermap.org/themes/openweathermap/assets/img/logo_white_cropped.png"
+        />
+      </div>
+      <div>
+        <input
+          type="text"
+          placeholder="Search your city name fow weather data"
+          id="city"
+        />
+
+        <button id="button" onclick="getWeather()">SEARCH</button>
+      </div>
+    </div>
+    <div id="container"></div>
+    <div id="weather7"></div>
+  </body>
+</html>
+<script>
+  let container = document.getElementById("container");
+  async function getWeather() {
+    try {
+      let city = document.getElementById("city").value;
+      console.log(city);
+
+      let res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=1452e80267c762a5083f19219f25f4f8&units=metric`
+      );
+
+      let data = await res.json();
+      appendData(data);
+      console.log("data:", data);
+
+      let lat = data.coord.lat;
+      let lon = data.coord.lon;
+
+      let res7 = await fetch(
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minute,hourly&appid=32ce108115971eaf5b586defc87531c2&units=metric`
+      );
+      let data7 = await res7.json();
+      getWeather7days(data7.daily);
+      console.log("data7:", data7.daily);
+
+    } catch (err) {
+      console.log("err:", err);
+    }
+  }
+
+  function appendData(data) {
+    container.innerHTML = "";
+    let innerDiv = document.createElement("div");
+    innerDiv.style.width = "200px";
+    innerDiv.style.padding = "0  30px";
+
+    let name = document.createElement("h5");
+    name.innerHTML = "City Name:-" + data.name;
+
+    let temp = document.createElement("h5");
+    temp.innerHTML = "Tempreture:-  " + data.main.temp;
+
+    let mintemp = document.createElement("h5");
+    mintemp.innerHTML = "Mintemp-  " + data.main.temp_min;
+
+    let humidity = document.createElement("h5");
+    humidity.innerHTML = "Humidity:-  " + data.main.humidity;
+
+    let maxtemp = document.createElement("h5");
+    maxtemp.innerHTML = "Maxtemp:-" + "  " + data.main.temp_max;
+
+    let wind = document.createElement("h5");
+    wind.innerText = "Wind Speed:- " + data.wind.speed + "km/h";
+
+    let clouds = document.createElement("h5");
+    clouds.innerText = "Cloud:- " + data.clouds.all;
+
+    let sunrise = document.createElement("h5");
+    sunrise.innerText = "Sunrise:- " + data.sys.sunrise;
+
+    let sunset = document.createElement("h5");
+    sunset.innerText = "Sunrise:- " + data.sys.sunset;
+
+    let iframe = document.createElement("iframe");
+    iframe.src = `https://maps.google.com/maps?q=${data.name}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+    iframe.width = "600";
+    iframe.height = "500";
+    innerDiv.append(
+      name,
+      temp,
+      mintemp,
+      maxtemp,
+      humidity,
+      wind,
+      clouds,
+      sunrise,
+      sunset
+    );
+    container.append( innerDiv, iframe);
+  }
+
+  function getWeather7days(data) {
+    let container7 = document.getElementById("weather7");
+    container7.innerHTML = null;
+
+    data.map(function (elem, index) {
+      if (index == week.length) {
+        index = 0;
+      }
+      let div = document.createElement("div");
+      div.style.border = "2px solid white";
+      div.style.borderRadius = "10px";
+
+      let day = document.createElement("h6");
+      day.innerText = week[index];
+      day.style.marginTop = "0px";
+
+      let img1 = document.createElement("img");
+      img1.src = `http://openweathermap.org/img/wn/${elem.weather[0].icon}@2x.png`;
+      img1.style.height = "60px";
+      img1.style.width = "60px";
+
+      let main = document.createElement("h6");
+      main.innerText = elem.weather[0].main;
+      main.style.marginTop = "0px";
+
+      let desc = document.createElement("h6");
+      desc.innerText = elem.weather[0].description;
+
+      let min = document.createElement("h6");
+      min.innerText = elem.temp.min;
+
+      let max = document.createElement("h6");
+      max.innerText = +elem.temp.max;
+
+      div.append(img1, main, day, desc, min, max);
+      container7.append(div);
+    });
+  }
+
+  let week = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+</script>
